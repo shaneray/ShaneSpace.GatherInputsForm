@@ -1,3 +1,11 @@
+param (
+    [string]$first = "Shane",
+    [string]$last = "",
+    [bool]$enabled = $false,
+    [string]$userDirectory = "",
+    [string]$notes = ""
+ )
+
 # Get Script Directory Path
 $scriptpath = $MyInvocation.MyCommand.Path
 $dir = Split-Path $scriptpath
@@ -10,28 +18,33 @@ $inputs = @{
     "first" = @{ 
        "Label" = "First Name:";
        "Required" = $true;
-       "Index" = 0
+       "Index" = 0;
+       "DefaultValue" = $first;
        };
     "last" = @{
        "Label" = "Last Name:";
        "Required" = $true;
-       "Index" = 1
+       "Index" = 1;
+       "DefaultValue" = $last;
        };
     "enabled" = @{
        "Label" = "User Enabled:";
        "InputType" = "CheckBox";       
-       "Index" = 2
+       "Index" = 2;
+       "DefaultValue" = $enabled;
        };
     "userDirectory" = @{
        "Label" = "User Directory:";
        "InputType" = "DirChooser";
        "Required" = $true;
-       "Index" = 3
+       "Index" = 3;
+       "DefaultValue" = $userDirectory;
        };
     "notes" = @{
        "Label" = "Notes:";
        "InputType" = "TextArea";
-       "Index" = 4
+       "Index" = 4;
+       "DefaultValue" = $notes;
        };
 };
 

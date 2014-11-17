@@ -31,16 +31,23 @@
             # Add controls
             if ($key.Value.InputType -eq "CheckBox") {
                 $textBox[$key.Name] = New-Object “System.Windows.Forms.CheckBox”;
+                if ($key.Value.DefaultValue -eq $true) {
+                    $textBox[$key.Name].CheckState = "Checked";
+                }
             }
             elseif ($key.Value.InputType -eq "DirChooser") {
+                # Add textbox with tag
                 $textBox[$key.Name] = New-Object “System.Windows.Forms.TextBox”;
                 $textBox[$key.Name].Tag = $key.Name;
+
+                # open folder browser and set output to the textbox with value
                 $folderBrowserEvent = [System.EventHandler] {
                     $FolderBrowser = New-Object System.Windows.Forms.FolderBrowserDialog;
                     [void]$FolderBrowser.ShowDialog();
                     $textBox[$this.Tag].Text = $FolderBrowser.SelectedPath;
                 };
 
+                # define browse button
                 $browseButton = New-Object “System.Windows.Forms.Button”;
                 $browseButton.Text = "...";
                 $browseButton.Top = $top;
@@ -53,14 +60,15 @@
             }
             elseif ($key.Value.InputType -eq "TextArea") {
                 $textBox[$key.Name] = New-Object “System.Windows.Forms.TextBox”;
+                $textBox[$key.Name].Text = $key.Value.DefaultValue;
             }
             else {
-                $textBox[$key.Name] = New-Object “System.Windows.Forms.TextBox”;        
+                $textBox[$key.Name] = New-Object “System.Windows.Forms.TextBox”;
+                $textBox[$key.Name].Text = $key.Value.DefaultValue;                      
             }
 
             $textBox[$key.Name].Left = $labelWidth + 15;
             $textBox[$key.Name].Top = $top;
-            $textBox[$key.Name].Text = "";
 
             if ($key.Value.InputType -eq "DirChooser") {
                 $textBox[$key.Name].Width = 175;
