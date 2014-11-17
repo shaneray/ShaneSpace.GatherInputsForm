@@ -39,7 +39,7 @@
                 # Add textbox with tag
                 $textBox[$key.Name] = New-Object “System.Windows.Forms.TextBox”;
                 $textBox[$key.Name].Tag = $key.Name;
-
+                $textBox[$key.Name].Text = $key.Value.DefaultValue;
                 # open folder browser and set output to the textbox with value
                 $folderBrowserEvent = [System.EventHandler] {
                     $FolderBrowser = New-Object System.Windows.Forms.FolderBrowserDialog;
