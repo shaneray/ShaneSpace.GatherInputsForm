@@ -1,4 +1,4 @@
-﻿function GatherInputsForm ($title, $inputs, $labelWidth = 150) {
+﻿function GatherInputsForm ($title, $inputs, $autoSubmit = $false, $labelWidth = 150) {
     # Wrap everything but final output to avoid unwanted output
     $null = .{
         # Put input objects in order
@@ -120,7 +120,7 @@
         $top = $top + 85;
         $form.Height = $top;
 
-        # on ok click, do validation and close
+        # Ok Event
         $eventHandler = [System.EventHandler]{
             $passedValidation = $true;
 
@@ -158,20 +158,27 @@
                 [void][System.Windows.Forms.MessageBox]::Show("There are required fields that do not have a value.  Required fields have been highlighted, please enter a value and try again.");        
             }
         };
+        [void]$button.Add_Click($eventHandler);
         
-        # cancel
+        # Cancel Event
         $CancelEventHandler = [System.EventHandler]{
             $textBox["formCanceled"].Text = "True";
             [void]$form.Close();
         };
-
-        [void]$button.Add_Click($eventHandler);
         [void]$buttonCancel.Add_Click($CancelEventHandler);
         
+        # Form Open Event
+        $formOpenEventHandler = [System.EventHandler] {
+            if ($autoSubmit -eq $true) {
+                $button.PerformClick();
+            }    
+        };
+
         # Add controls to all the above objects defined
         $form.Controls.Add($button);
         $form.Controls.Add($buttonCancel);
         $form.Controls.Add($cancelBox);
+        $form.Add_Shown($formOpenEventHandler);
         [void]$form.ShowDialog();
     }
 

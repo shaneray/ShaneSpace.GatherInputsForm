@@ -48,8 +48,16 @@ $inputs = @{
        };
 };
 
+# Determine if anything set by command line arguments, if so autosubmit
+$autoSubmit = $false;
+if ($first -ne "" -or $first -ne $false) { $autoSubmit = $true }
+if ($last -ne "" -or $last -ne $false) { $autoSubmit = $true }
+if ($enabled -ne "" -or $enabled -ne $false) { $autoSubmit = $true }
+if ($userDirectory -ne "" -or $userDirectory -ne $false) { $autoSubmit = $true }
+if ($notes -ne "" -or $notes -ne $false) { $autoSubmit = $true }
+
 # Call Gather Inputs Form
-$formResults = GatherInputsForm -title "Project Details" -inputs $inputs -labelWidth 150
+$formResults = GatherInputsForm -title "Project Details" -inputs $inputs -labelWidth 150 -AutoSubmit $autoSubmit
 
 # Do work with results (just displaying in simple demo)
 $formResults
