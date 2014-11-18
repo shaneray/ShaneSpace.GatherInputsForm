@@ -1,5 +1,5 @@
 param (
-    [string]$first = "Shane",
+    [string]$first = "Cher",
     [string]$last = "",
     [bool]$enabled = $false,
     [string]$userDirectory = "",
@@ -23,7 +23,8 @@ $inputs = @{
        };
     "last" = @{
        "Label" = "Last Name:";
-       "Required" = $true;
+       # Only person I know without a last name is cher, so lastname is required if first name is not equal to cher
+       "RequiredIf" = @{ "OtherProperty" = "first"; "Condition" = "NotEqualTo"; "Value" = "Cher" };
        "Index" = 1;
        "DefaultValue" = $last;
        };
@@ -36,13 +37,14 @@ $inputs = @{
     "userDirectory" = @{
        "Label" = "User Directory:";
        "InputType" = "DirChooser";
-       "Required" = $true;
+       "RequiredIf" = @{ "OtherProperty" = "enabled"; "Condition" = "EqualTo"; "Value" = $true };
        "Index" = 3;
        "DefaultValue" = $userDirectory;
        };
     "notes" = @{
        "Label" = "Notes:";
        "InputType" = "TextArea";
+       "Required" = $true;
        "Index" = 4;
        "DefaultValue" = $notes;
        };
@@ -50,14 +52,16 @@ $inputs = @{
 
 # Determine if anything set by command line arguments, if so autosubmit
 $autoSubmit = $false;
-if ($first -ne "" -or $first -ne $false) { $autoSubmit = $true }
-if ($last -ne "" -or $last -ne $false) { $autoSubmit = $true }
-if ($enabled -ne "" -or $enabled -ne $false) { $autoSubmit = $true }
-if ($userDirectory -ne "" -or $userDirectory -ne $false) { $autoSubmit = $true }
-if ($notes -ne "" -or $notes -ne $false) { $autoSubmit = $true }
+if ([bool]$first -or
+    [bool]$last -or
+    [bool]$enabled -or
+    [bool]$userDirectory -or
+    [bool]$notes) {
+        $autoSubmit = $true
+}
 
 # Call Gather Inputs Form
 $formResults = GatherInputsForm -title "Project Details" -inputs $inputs -labelWidth 150 -AutoSubmit $autoSubmit
 
 # Do work with results (just displaying in simple demo)
-$formResults
+$formResults | Out-GridView

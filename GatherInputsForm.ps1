@@ -123,11 +123,46 @@
         # Ok Event
         $eventHandler = [System.EventHandler]{
             $passedValidation = $true;
-
             foreach ($key in $inputs) {
+                # Cant run validation on a checkbox as value will always be true or false
+                if ($textBox[$key.Name].GetType().Name -eq "CheckBox") {
+                    continue;
+                }
+
+                # Make background default color (white)
+                $textBox[$key.Name].BackColor = "White";
+
+                # if Required is set and text is empty highlight
                 if (($key.Value.Required -eq $true) -and ($textBox[$key.Name].Text -eq "")) {
                     $textBox[$key.Name].BackColor = "Yellow";
                     $passedValidation = $false;
+                }
+
+                # if Required if is set, check
+                if ($key.Value.RequiredIf -ne $null) {
+
+                    # get value of "Other Property"
+                    $currentValue = $textBox[$key.Value.RequiredIf.OtherProperty].Text;
+
+                    # if other property is  checkbox set value to true or false
+                    if ($textBox[$key.Value.RequiredIf.OtherProperty].GetType().Name -eq "CheckBox") {
+                        if ($textBox[$key.Value.RequiredIf.OtherProperty].CheckState -eq "Checked") {
+                            $currentValue = $true;
+                        }
+                        else {
+                            $currentValue = $false;
+                        }
+                    }
+                    
+                    # Check required if conditions
+                    if (($key.Value.RequiredIf.Condition -eq "EqualTo") -and ($currentValue -eq $key.Value.RequiredIf.Value) -and ($textBox[$key.Name].Text -eq "")) {
+                        $textBox[$key.Name].BackColor = "Yellow";
+                        $passedValidation = $false;
+                    }
+                    if (($key.Value.RequiredIf.Condition -eq "NotEqualTo") -and ($currentValue -ne $key.Value.RequiredIf.Value)-and ($textBox[$key.Name].Text -eq "")) {
+                        $textBox[$key.Name].BackColor = "Yellow";
+                        $passedValidation = $false;
+                    }
                 }
             }
 
